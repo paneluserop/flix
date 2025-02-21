@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RapidFlix - Powered by RapidFire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .login-form {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.5);
+            text-align: center;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .login-form button {
+            background: cyan;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .login-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.2);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.7);
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+        .progress-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid rgba(0, 255, 255, 0.3);
+            border-top: 10px solid cyan;
+            animation: spin 1.5s linear infinite;
+        }
+        .loading-text {
+            color: white;
+            font-size: 14px;
+        }
+        .brand {
+            color: cyan;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #player-container {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: black;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-form" id="loginForm">
+        <h2 style="color: cyan;">Login to RapidFlix</h2>
+        <p class="brand">Developed by Panel User OP</p>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="validateLogin()">Login</button>
+        <p class="brand">© 2025 RapidFire Corporation</p>
+    </div>
+
+    <div class="login-container" id="loginBox">
+        <div class="progress-circle"></div>
+        <p class="loading-text">Loading...</p>
+    </div>
+
+    <div id="player-container">
+        <iframe src="https://pcmirror.cc/tv/home"></iframe>
+        <p class="brand" style="position: absolute; bottom: 10px; width: 100%; text-align: center;">Powered by RapidFire</p>
+    </div>
+    
+    <script>
+        function validateLogin() {
+            const user = document.getElementById("username").value.toUpperCase();
+            const pass = document.getElementById("password").value.toUpperCase();
+            if (user === "RAPIDFIRE" && pass === "FREE") {
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("loginBox").style.display = "flex";
+                startLoading();
+            } else {
+                alert("Invalid credentials!");
+            }
+        }
+
+        function startLoading() {
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 20;
+                document.querySelector(".loading-text").innerText = `Loading ${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById("loginBox").style.display = "none";
+                    document.getElementById("player-container").style.display = "block";
+                }
+            }, 200);
+        }
+    </script>
+</body>
+</html>
