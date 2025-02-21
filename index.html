@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RapidFire Dev Portal</title>
+    <title>RapidFire API Tester</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
             font-family: 'Poppins', sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            background: linear-gradient(135deg, #121212, #1f1f1f);
             color: white;
             display: flex;
             justify-content: center;
@@ -20,115 +20,70 @@
             height: 100vh;
             flex-direction: column;
         }
-        .login-form, .dashboard {
-            background: rgba(0, 255, 255, 0.1);
+        .container {
+            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.5);
             text-align: center;
+            width: 60%;
         }
-        .login-form input, .login-form button {
+        input, select, button, textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: none;
             border-radius: 5px;
-            text-align: center;
-            text-transform: uppercase;
+            background: #222;
+            color: white;
         }
-        .login-form button {
+        button {
             background: cyan;
             cursor: pointer;
             font-weight: bold;
         }
-        .dashboard {
-            display: none;
-            text-align: left;
-            width: 80%;
-        }
-        .tab-container {
-            display: flex;
-            justify-content: space-around;
+        .response-container {
+            background: black;
+            color: lime;
             padding: 10px;
-        }
-        .tab {
-            cursor: pointer;
-            padding: 10px;
-            background: rgba(0, 255, 255, 0.2);
             border-radius: 5px;
-        }
-        .content {
-            display: none;
-            padding: 20px;
-        }
-        .active {
-            display: block;
+            text-align: left;
+            height: 300px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-    <div class="login-form" id="loginForm">
-        <h2>Login to RapidFire Dev Portal</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="validateLogin()">Login</button>
-    </div>
-
-    <div class="dashboard" id="dashboard">
-        <h2>Welcome to the Dev Portal</h2>
-        <div class="tab-container">
-            <div class="tab" onclick="openTab('editor')">Code Editor</div>
-            <div class="tab" onclick="openTab('keyauth')">KeyAuth Panel</div>
-            <div class="tab" onclick="openTab('api')">API Playground</div>
-        </div>
-        
-        <div id="editor" class="content active">
-            <h3>Live Code Editor</h3>
-            <textarea id="code" style="width:100%;height:200px;" onkeyup="updatePreview()"></textarea>
-            <iframe id="preview" style="width:100%;height:200px;border:none;"></iframe>
-        </div>
-        
-        <div id="keyauth" class="content">
-            <h3>KeyAuth Management</h3>
-            <p>Manage API keys and authentication logs.</p>
-        </div>
-        
-        <div id="api" class="content">
-            <h3>API Testing Playground</h3>
-            <input type="text" id="apiUrl" placeholder="Enter API URL" style="width: 80%;">
-            <button onclick="testAPI()">Send Request</button>
-            <pre id="apiResponse"></pre>
-        </div>
+    <div class="container">
+        <h2>RapidFire API Tester</h2>
+        <select id="method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+        </select>
+        <input type="text" id="apiUrl" placeholder="Enter API URL">
+        <textarea id="body" placeholder="Enter request body (JSON format)" style="height: 100px;"></textarea>
+        <button onclick="sendRequest()">Send Request</button>
+        <h3>Response</h3>
+        <pre class="response-container" id="apiResponse">Waiting for response...</pre>
     </div>
     
     <script>
-        function validateLogin() {
-            const user = document.getElementById("username").value.toUpperCase();
-            const pass = document.getElementById("password").value.toUpperCase();
-            if (user === "RAPIDFIRE" && pass === "FREE") {
-                document.getElementById("loginForm").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
-            } else {
-                alert("Invalid credentials!");
-            }
-        }
-
-        function openTab(tabName) {
-            document.querySelectorAll('.content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-        }
-
-        function updatePreview() {
-            const code = document.getElementById("code").value;
-            const previewFrame = document.getElementById("preview").contentWindow.document;
-            previewFrame.open();
-            previewFrame.write(code);
-            previewFrame.close();
-        }
-
-        function testAPI() {
+        function sendRequest() {
             const url = document.getElementById("apiUrl").value;
-            fetch(url)
+            const method = document.getElementById("method").value;
+            const body = document.getElementById("body").value;
+            
+            let options = {
+                method: method,
+                headers: { "Content-Type": "application/json" }
+            };
+            if (method !== "GET" && body.trim() !== "") {
+                options.body = body;
+            }
+            
+            fetch(url, options)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("apiResponse").textContent = JSON.stringify(data, null, 2);
